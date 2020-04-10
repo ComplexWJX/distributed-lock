@@ -1,0 +1,6 @@
+spring:
+  profiles:
+    active: dev
+  redis:
+    password: 123456
+    url:
