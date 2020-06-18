@@ -1,0 +1,12 @@
+logging:
+  level:
+    root: info
+
+  file:
+    path: /log
+  config: classpath:config/logback.xml
+
+spring:
+    redis:
+      host: localhost
+      password: 123456
