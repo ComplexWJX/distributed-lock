@@ -71,7 +71,7 @@ public class RedisLock {
         Store store = new Store(20);
         StoreService storeService = new StoreService();
         RedisLock redisLock = new RedisLock();
-        AtomicInteger count = new AtomicInteger(20);
+        AtomicInteger count = new AtomicInteger(22);
         for (int i = 0; i < count.intValue(); i++) {
             poolExecutor.execute(() -> {
                 if (count.get() > 0) {
