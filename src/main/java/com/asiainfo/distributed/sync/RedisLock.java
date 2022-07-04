@@ -53,13 +53,13 @@ public class RedisLock {
 
         do {
             log.info("lockValue:{}", isLock);
-            SetArgs setArgs = new SetArgs().nx().ex(3);
+            SetArgs setArgs = new SetArgs().nx().px(60);
             stringRedisFuture = asyncCommands.set(key, "lock", setArgs);
         } while (!(isLock = ("OK".equals(stringRedisFuture.get()))));
 
         log.info("========================" + Thread.currentThread().getName() + "  get lock=====================");
-        //            asyncCommands.setex("lock",3000,"lock");
-        asyncCommands.expire("lock", 1000); //TODO 如果执行到此处，服务器宕机，设置key失效时间失败，key永不过期，会造成死锁
+        //asyncCommands.setex("lock",3000,"lock");
+        //asyncCommands.expire("lock", 1000); //TODO 如果执行到此处，服务器宕机，设置key失效时间失败，key永不过期，会造成死锁
     }
 
     public void unlock(String key) {
@@ -72,34 +72,37 @@ public class RedisLock {
         StoreService storeService = new StoreService();
         RedisLock redisLock = new RedisLock();
         AtomicInteger count = new AtomicInteger(22);
-        for (int i = 0; i < count.intValue(); i++) {
+        while (!Thread.interrupted()) {
             poolExecutor.execute(() -> {
-                if (count.get() > 0) {
-                    if (count.get() % 2 == 0) {
-                        try {
-                            redisLock.lock("lock");
-                            storeService.deduct(store);
-                            Thread.sleep(1500);
-                            redisLock.unlock("lock");
-                            log.info("t1 release lock {}", "lock");
-                        } catch (Exception ex) {
-                            log.error(ex.getMessage());
-                        }
-                    }
-                    else {
-                        try {
-                            redisLock.lock("lock");
-                            storeService.deduct(store);
-                            Thread.sleep(500);
-                            redisLock.unlock("lock");
-                            log.info("t2 release lock {}", "lock");
-                        } catch (Exception ex) {
-                            log.error(ex.getMessage());
-                        }
-                    }
-                    count.decrementAndGet();
+                if (store.getLeft() <= 0) {
+                    Thread.currentThread().interrupt();
                 }
+                if (count.get() % 2 == 0) {
+                    try {
+                        redisLock.lock("lock");
+                        storeService.deduct(store);
+                        Thread.sleep(100);
+                        redisLock.unlock("lock");
+                        log.info("t1 release lock {}", "lock");
+                    } catch (Exception ex) {
+                        log.error(ex.getMessage());
+                    }
+                }
+                else {
+                    try {
+                        redisLock.lock("lock");
+                        storeService.deduct(store);
+                        Thread.sleep(50);
+                        redisLock.unlock("lock");
+                        log.info("t2 release lock {}", "lock");
+                    } catch (Exception ex) {
+                        log.error(ex.getMessage());
+                    }
+                }
+                count.decrementAndGet();
             });
         }
+        System.out.println("已无库存...");
+        poolExecutor.shutdown();
     }
 }

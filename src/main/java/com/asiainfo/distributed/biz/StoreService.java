@@ -2,7 +2,7 @@ package com.asiainfo.distributed.biz;
 
 public class StoreService {
     public void deduct(Store store) {
-        if (store.getTotal() > 0) {
+        if (store.getLeft() > 0) {
             // 扣减
             store.setLeft(store.getLeft() - 1);
         }
