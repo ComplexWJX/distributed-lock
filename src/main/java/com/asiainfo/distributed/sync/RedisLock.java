@@ -43,7 +43,6 @@ public class RedisLock {
     public void lock(String key) throws Exception {
         RedisFuture<Boolean> booleanRedisFuturefuture;
         RedisFuture<String> stringRedisFuture;
-        Boolean isLock = false;
         /*do{
             // 异步操作setnx命令实现锁，通过阻塞获取future结果
             booleanRedisFuturefuture = asyncCommands.setnx("lock","lock");
@@ -51,13 +50,11 @@ public class RedisLock {
             Thread.sleep(1000);
         }while (!(isLock =booleanRedisFuturefuture.get()));*/
 
-        do {
-            log.info("lockValue:{}", isLock);
-            SetArgs setArgs = new SetArgs().nx().px(60);
-            stringRedisFuture = asyncCommands.set(key, "lock", setArgs);
-        } while (!(isLock = ("OK".equals(stringRedisFuture.get()))));
-
-        log.info("========================" + Thread.currentThread().getName() + "  get lock=====================");
+        SetArgs setArgs = new SetArgs().nx().px(60);
+        stringRedisFuture = asyncCommands.set(key, "lock", setArgs);
+        if ("OK".equals(stringRedisFuture.get())) {
+            log.info("========================" + Thread.currentThread().getName() + "  get lock=====================");
+        }
         //asyncCommands.setex("lock",3000,"lock");
         //asyncCommands.expire("lock", 1000); //TODO 如果执行到此处，服务器宕机，设置key失效时间失败，key永不过期，会造成死锁
     }
@@ -72,16 +69,14 @@ public class RedisLock {
         StoreService storeService = new StoreService();
         RedisLock redisLock = new RedisLock();
         AtomicInteger count = new AtomicInteger(22);
-        while (!Thread.interrupted()) {
+        while (store.getLeft() > 0) {
             poolExecutor.execute(() -> {
-                if (store.getLeft() <= 0) {
-                    Thread.currentThread().interrupt();
-                }
-                if (count.get() % 2 == 0) {
+                count.getAndDecrement();
+                if (count.get() == 21) {
                     try {
                         redisLock.lock("lock");
                         storeService.deduct(store);
-                        Thread.sleep(100);
+                        Thread.sleep(900);
                         redisLock.unlock("lock");
                         log.info("t1 release lock {}", "lock");
                     } catch (Exception ex) {
@@ -99,10 +94,15 @@ public class RedisLock {
                         log.error(ex.getMessage());
                     }
                 }
-                count.decrementAndGet();
             });
         }
+
+        for (;;) {
+            if (store.getLeft() <= 0) {
+                poolExecutor.shutdown();
+                break;
+            }
+        }
         System.out.println("已无库存...");
-        poolExecutor.shutdown();
     }
 }
