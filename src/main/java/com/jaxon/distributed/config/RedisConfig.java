@@ -1,4 +1,4 @@
-package com.asiainfo.distributed.config;
+package com.jaxon.distributed.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -1,4 +1,4 @@
-package com.asiainfo.distributed.sync;
+package com.jaxon.distributed.sync;
 
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisURI;

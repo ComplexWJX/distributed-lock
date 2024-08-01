@@ -1,7 +1,7 @@
-package com.asiainfo.distributed.sync;
+package com.jaxon.distributed.sync;
 
-import com.asiainfo.distributed.biz.Store;
-import com.asiainfo.distributed.biz.StoreService;
+import com.jaxon.distributed.biz.Store;
+import com.jaxon.distributed.biz.StoreService;
 import io.lettuce.core.RedisFuture;
 import io.lettuce.core.SetArgs;
 import io.lettuce.core.api.StatefulRedisConnection;

@@ -1,4 +1,4 @@
-package com.asiainfo.distributed.biz;
+package com.jaxon.distributed.biz;
 
 import lombok.Data;
 

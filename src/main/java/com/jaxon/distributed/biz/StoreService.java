@@ -1,4 +1,4 @@
-package com.asiainfo.distributed.biz;
+package com.jaxon.distributed.biz;
 
 public class StoreService {
     public void deduct(Store store) {

@@ -1,4 +1,4 @@
-package com.asiainfo.distributed.sync;
+package com.jaxon.distributed.sync;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
