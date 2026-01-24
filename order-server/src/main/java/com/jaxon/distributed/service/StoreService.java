@@ -1,4 +1,6 @@
-package com.jaxon.distributed.biz;
+package com.jaxon.distributed.service;
+
+import com.jaxon.distributed.biz.Store;
 
 public class StoreService {
     public void deduct(Store store) {

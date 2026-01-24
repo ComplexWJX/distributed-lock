@@ -1,7 +1,7 @@
 package com.jaxon.distributed.sync;
 
 import com.jaxon.distributed.biz.Store;
-import com.jaxon.distributed.biz.StoreService;
+import com.jaxon.distributed.service.StoreService;
 import io.lettuce.core.RedisFuture;
 import io.lettuce.core.SetArgs;
 import io.lettuce.core.api.StatefulRedisConnection;

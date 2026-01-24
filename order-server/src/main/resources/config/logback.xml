@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <!-- 项目名称 -->
-    <property name="projectname" value="testapollo" />
+    <property name="projectname" value="order-server" />
     <!-- 日志存放路径 -->
-    <property name="log.path" value="/app/${projectname}}/logs" />
+    <property name="log.path" value="logs/${projectname}/logs" />
     <!-- 日志输出格式 -->
     <property name="log.pattern" value="%d{yyy-MM-dd HH:mm:ss.SSS} [%X{X-B3-TraceId:-},%X{X-B3-SpanId:-}] [%thread] %-5level %logger{20} - [%method,%line] - %msg%n" />
 
@@ -61,7 +61,7 @@
 
 
     <!-- 系统模块日志级别控制  -->
-    <logger name="com.loop" level="info" />
+    <logger name="com.jaxon.distributed" level="info" />
     <!-- Spring日志级别控制  -->
     <logger name="org.springframework" level="warn" />
 
